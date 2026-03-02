@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
-import { UniverseThemeContext } from "../providers/UniverseThemeProvider";
-import { StudioStateContext } from "../providers/StudioStateProvider";
+import { UniverseThemeContext } from "../context/UniverseThemeProvider";
+import { StudioStateContext } from "../context/StudioStateProvider";
 
 export default function WallpaperLayer() {
   const { currentTheme } = useContext(UniverseThemeContext);
