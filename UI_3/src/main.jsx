@@ -7,15 +7,15 @@ import App from "./App";
 import "./index.css";
 
 // Global Providers (Living Studio Brain)
-import { StudioStateProvider } from "./providers/StudioStateProvider";
-import { UniverseThemeProvider } from "./providers/UniverseThemeProvider";
-import { OverlayProvider } from "./providers/OverlayProvider";
+import { StudioStateProvider } from "./context/StudioStateProvider";
+import { UniverseThemeProvider } from "./context/UniverseThemeProvider";
+import { OverlayProvider } from "./context/OverlayProvider";
 
 // Future: C++ Agent Bridge (WebAssembly or Native Messaging)
-import { CPPAgentProvider } from "./providers/CPPAgentProvider";
+// (Not implemented yet — removed from JSX)
 
 // Future: Multi-Agent Orchestration Client (Primus, Zero, VPS Agents)
-import { AgentOrchestratorProvider } from "./providers/AgentOrchestratorProvider";
+// (Not implemented yet — removed from JSX)
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -23,19 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <UniverseThemeProvider>
         <StudioStateProvider>
           <OverlayProvider>
-            {/* 
-              Future-proof: C++ engine layer for physics, animation curves,
-              real-time rendering, or WASM-based motion engine.
-            */}
-            <CPPAgentProvider>
-              {/* 
-                Future-proof: Primus + Zero + 22 VPS agents.
-                This provider exposes a unified API client for all agents.
-              */}
-              <AgentOrchestratorProvider>
-                <App />
-              </AgentOrchestratorProvider>
-            </CPPAgentProvider>
+            <App />
           </OverlayProvider>
         </StudioStateProvider>
       </UniverseThemeProvider>
