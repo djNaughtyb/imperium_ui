@@ -1,47 +1,45 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
-import { UniverseThemeProvider } from "./src/context/UniverseThemeProvider";
-import { StudioStateProvider } from "./src/context/StudioStateProvider";
-import { OverlayProvider } from "./src/context/OverlayProvider";
-import { ModeManagerProvider } from "./src/context/ModeManagerProvider"; // ← FIXED
+import { UniverseThemeProvider } from "./context/UniverseThemeProvider";
+import { StudioStateProvider } from "./context/StudioStateProvider";
+import { OverlayProvider } from "./context/OverlayProvider";
+import { ModeManagerProvider } from "./context/ModeManagerProvider";
 
-import StudioShell from "./src/studio/StudioShell";
+import StudioShell from "./studio/StudioShell";
 
-import WallpaperLayer from "./src/Layers/WallpaperLayer";
-import ParallaxLayer from "./src/Layers/ParallaxLayer";
-import AnimatedOverlay from "./src/Layers/AnimatedOverlay";
+import WallpaperLayer from "./Layers/WallpaperLayer";
+import ParallaxLayer from "./Layers/ParallaxLayer";
+import AnimatedOverlay from "./Layers/AnimatedOverlay";
 
-import ComicsMode from "./src/modes/ComicsMode";
-import CharacterMode from "./src/modes/CharacterMode";
+import ComicsMode from "./modes/ComicsMode";
+import CharacterMode from "./modes/CharacterMode";
 
 export default function App() {
   return (
-    <Router>
-      <UniverseThemeProvider>
-        <StudioStateProvider>
-          <ModeManagerProvider>
-            <OverlayProvider>
+    <UniverseThemeProvider>
+      <StudioStateProvider>
+        <ModeManagerProvider>
+          <OverlayProvider>
 
-              <div className="relative w-full h-full overflow-hidden">
+            <div className="relative w-full h-full overflow-hidden">
 
-                <WallpaperLayer />
-                <ParallaxLayer depth={2} />
-                <AnimatedOverlay />
+              <WallpaperLayer />
+              <ParallaxLayer depth={2} />
+              <AnimatedOverlay />
 
-                <StudioShell>
-                  <Routes>
-                    <Route path="/comics" element={<ComicsMode />} />
-                    <Route path="/characters" element={<CharacterMode />} />
-                  </Routes>
-                </StudioShell>
+              <StudioShell>
+                <Routes>
+                  <Route path="/comics" element={<ComicsMode />} />
+                  <Route path="/characters" element={<CharacterMode />} />
+                </Routes>
+              </StudioShell>
 
-              </div>
+            </div>
 
-            </OverlayProvider>
-          </ModeManagerProvider>
-        </StudioStateProvider>
-      </UniverseThemeProvider>
-    </Router>
+          </OverlayProvider>
+        </ModeManagerProvider>
+      </StudioStateProvider>
+    </UniverseThemeProvider>
   );
 }
