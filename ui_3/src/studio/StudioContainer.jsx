@@ -1,35 +1,37 @@
-import React, { useContext } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { StudioStateContext } from '../../context/StudioStateProvider';
-import { UniverseThemeContext } from '../../context/UniverseThemeProvider';
-import WallpaperLayer from './WallpaperLayer';
-import ParallaxLayer from './ParallaxLayer';
-import AnimatedOverlay from './AnimatedOverlay';
+// src/layers/StudioContainer.jsx
+import React, { useContext } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { StudioContext } from "../context/StudioContext";
+import { ThemeContext } from "../context/ThemeContext";
 
-const StudioContainer = ({ children }) => {
-  const { studioState } = useContext(StudioStateContext);
-  const { currentTheme } = useContext(UniverseThemeContext);
+import WallpaperLayer from "./WallpaperLayer";
+import ParallaxLayer from "./ParallaxLayer";
+import AnimatedOverlay from "./AnimatedOverlay";
+
+export default function StudioContainer({ children }) {
+  const { currentStage } = useContext(StudioContext);
+  const { theme } = useContext(ThemeContext);
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black text-white">
-      {/* Background Layers - The "Living" part */}
-      <WallpaperLayer state={studioState} theme={currentTheme} />
-      
-      <ParallaxLayer depth={1} state={studioState}>
+
+      {/* Background Layers */}
+      <WallpaperLayer />
+
+      <ParallaxLayer depth={1}>
         <div className="absolute inset-0 pointer-events-none opacity-30">
-          {/* Floating comic dust/particles */}
-          <AnimatedOverlay type="particles" />
+          <AnimatedOverlay />
         </div>
       </ParallaxLayer>
 
-      {/* Main Workspace UI */}
+      {/* Main Workspace */}
       <main className="relative z-10 w-full h-full">
         <AnimatePresence mode="wait">
           <motion.div
-            key={studioState}
-            initial={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+            key={currentStage}
+            initial={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
             transition={{ duration: 0.8, ease: "circOut" }}
             className="w-full h-full"
           >
@@ -38,14 +40,12 @@ const StudioContainer = ({ children }) => {
         </AnimatePresence>
       </main>
 
-      {/* Dynamic Lighting Overlay */}
-      <div 
+      {/* Optional Stage‑Based Lighting */}
+      <div
         className={`absolute inset-0 pointer-events-none transition-colors duration-1000 ${
-          studioState === 'MARKETING_LAB' ? 'bg-cyan-500/5' : 'bg-transparent'
-        }`} 
+          currentStage === 4 ? "bg-cyan-500/5" : "bg-transparent"
+        }`}
       />
     </div>
   );
-};
-
-export default StudioContainer;
+}
