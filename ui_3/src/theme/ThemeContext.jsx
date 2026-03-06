@@ -1,23 +1,22 @@
-import { createContext, useState, useContext, PropsWithChildren } from react;
+// src/context/ThemeContext.jsx
+import { createContext, useState, useContext } from "react";
 
-const ThemeContext = createContext({});
+export const ThemeContext = createContext(null);
 
-const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState("cosmic");
-  const [isDarkMode, setIsDarkMode] = useState(false);
+export function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState("light");
 
-  const toggleTheme = (newTheme) => {
-    setTheme(newTheme);
-    setIsDarkMode(newTheme === "noir");
+  const toggleTheme = () => {
+    const next = theme === "light" ? "dark" : "light";
+    setTheme(next);
+    document.documentElement.classList.toggle("dark", next === "dark");
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, isDarkMode }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
-};
+}
 
-const useThemeContext = () => useContext(ThemeContext);
-
-export { ThemeProvider, useThemeContext };
+export const useThemeContext = () => useContext(ThemeContext);
