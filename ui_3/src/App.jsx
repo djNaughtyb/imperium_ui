@@ -2,71 +2,66 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-// Core Providers
-import { UniverseThemeProvider } from "./context/UniverseThemeProvider";
-import { StudioStateProvider } from "./context/StudioStateProvider";
+import { ThemeProvider } from "./context/ThemeContext";
+import { StudioProvider } from "./context/StudioContext";
+import { PanelProvider } from "./context/PanelContext";
 import { OverlayProvider } from "./context/OverlayProvider";
-import { ModeManagerProvider } from "./context/ModeManagerProvider";
 
-// Cinematic Layers
-import WallpaperLayer from "./layers/WallpaperLayer";
-import ParallaxLayer from "./layers/ParallaxLayer";
-import AnimatedOverlay from "./layers/AnimatedOverlay";
+import StudioContainer from "./layers/StudioContainer";
+import ProjectShell from "./layout/ProjectShell";
 
-// Studio Shell + Modes
-import StudioShell from "./studio/StudioShell";
-import ComicsMode from "./modes/ComicsMode";
-
-// Crash‑proof wrapper
-function Safe({ children }) {
-  try {
-    return children;
-  } catch (err) {
-    console.error("Component crashed:", err);
-    return (
-      <div style={{ color: "red", padding: 20 }}>
-        Component failed to load. Check console.
-      </div>
-    );
-  }
-}
+import ComicStudio from "./screens/studio/ComicStudio";
+import CharacterList from "./screens/characters/CharacterList";
+import PanelList from "./screens/panels/PanelList";
 
 export default function App() {
   return (
-    <UniverseThemeProvider>
-      <StudioStateProvider>
-        <OverlayProvider>
-          <ModeManagerProvider>
+    <ThemeProvider>
+      <StudioProvider>
+        <PanelProvider>
+          <OverlayProvider>
 
-            <div className="relative w-full h-full overflow-hidden bg-black text-white">
+            <StudioContainer>
+              <Routes>
 
-              {/* Cinematic Layers */}
-              <Safe><WallpaperLayer /></Safe>
-              <Safe><ParallaxLayer depth={2} /></Safe>
-              <Safe><AnimatedOverlay /></Safe>
+                <Route
+                  path="/"
+                  element={<div className="p-10 text-3xl">Studio Online</div>}
+                />
 
-              {/* Main Studio Frame */}
-              <Safe>
-                <StudioShell>
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        <div style={{ padding: 40, fontSize: 24 }}>
-                          Studio Online
-                        </div>
-                      }
-                    />
-                    <Route path="/comics" element={<ComicsMode />} />
-                  </Routes>
-                </StudioShell>
-              </Safe>
+                <Route
+                  path="/studio/project/:projectId"
+                  element={
+                    <ProjectShell>
+                      <ComicStudio />
+                    </ProjectShell>
+                  }
+                />
 
-            </div>
+                <Route
+                  path="/studio/project/:projectId/characters"
+                  element={
+                    <ProjectShell>
+                      <CharacterList />
+                    </ProjectShell>
+                  }
+                />
 
-          </ModeManagerProvider>
-        </OverlayProvider>
-      </StudioStateProvider>
-    </UniverseThemeProvider>
+                <Route
+                  path="/studio/project/:projectId/panels"
+                  element={
+                    <ProjectShell>
+                      <PanelList />
+                    </ProjectShell>
+                  }
+                />
+
+              </Routes>
+            </StudioContainer>
+
+          </OverlayProvider>
+        </PanelProvider>
+      </StudioProvider>
+    </ThemeProvider>
   );
 }
