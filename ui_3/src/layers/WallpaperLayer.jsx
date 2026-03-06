@@ -1,35 +1,32 @@
+// src/layers/WallpaperLayer.jsx
 import React, { useContext, useMemo } from "react";
-import { UniverseThemeContext } from "../context/UniverseThemeProvider";
-import { StudioStateContext } from "../context/StudioStateProvider";
+import { ThemeContext } from "../context/ThemeContext";
+import { StudioContext } from "../context/StudioContext";
 
 export default function WallpaperLayer() {
-  const { currentTheme } = useContext(UniverseThemeContext);
-  const { studioState } = useContext(StudioStateContext);
+  const { theme } = useContext(ThemeContext);
+  const { currentStage } = useContext(StudioContext);
 
-  // Dynamic wallpaper selection based on theme + mode
   const wallpaper = useMemo(() => {
-    const theme = currentTheme || "default";
+    const stageWallpapers = {
+      1: "/wallpapers/stage1.jpg",
+      2: "/wallpapers/stage2.jpg",
+      3: "/wallpapers/stage3.jpg",
+      4: "/wallpapers/stage4.jpg",
+    };
 
-    const wallpapers = {
-      default: "/wallpapers/default.jpg",
+    const themeWallpapers = {
+      light: "/wallpapers/light.jpg",
       dark: "/wallpapers/dark.jpg",
       neon: "/wallpapers/neon.jpg",
-      cosmic: "/wallpapers/cosmic.jpg",
-      manga: "/wallpapers/manga.jpg",
-      anime: "/wallpapers/anime.jpg",
-      storyboard: "/wallpapers/storyboard.jpg",
     };
 
-    // Mode overrides theme when active
-    const modeOverrides = {
-      COMICS: "/wallpapers/comics.jpg",
-      MANGA: "/wallpapers/manga.jpg",
-      ANIME: "/wallpapers/anime.jpg",
-      STORYBOARD: "/wallpapers/storyboard.jpg",
-    };
-
-    return modeOverrides[studioState] || wallpapers[theme] || wallpapers.default;
-  }, [currentTheme, studioState]);
+    return (
+      stageWallpapers[currentStage] ||
+      themeWallpapers[theme] ||
+      "/wallpapers/default.jpg"
+    );
+  }, [theme, currentStage]);
 
   return (
     <div
