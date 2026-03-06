@@ -1,21 +1,21 @@
-import { useEffect, useState } from react;
-import { useRouter } from next/router;
-import { motion } from framer-motion;
+// src/ui/transitions/StageTransition.jsx
+
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export const StageTransition = ({ fromStage, toStage }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [transitioning, setTransitioning] = useState(true);
 
   useEffect(() => {
-    // Trigger transition animation
-    const transitionTimeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       setTransitioning(false);
-      // Navigate to new stage after transition completes
-      router.push(`/${toStage}`);
-    }, 1000); // Match animation duration
+      navigate(`/${toStage}`);
+    }, 1000);
 
-    return () => clearTimeout(transitionTimeout);
-  }, [toStage]);
+    return () => clearTimeout(timeout);
+  }, [toStage, navigate]);
 
   return (
     <motion.div
