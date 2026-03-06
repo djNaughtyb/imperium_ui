@@ -1,57 +1,65 @@
-import { useEffect, useState } from "react";
+// src/context/PanelContext.jsx
 
-export const PanelContext = createContext();
+import { createContext, useContext, useState, useCallback } from "react";
+
+const PanelContext = createContext(null);
 
 export const PanelProvider = ({ children }) => {
-  const [panels, setPanels] = useState(() => {
-    const saved = localStorage.getItem("panels");
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [layout, setLayout] = useState(() => {
-    const savedLayout = localStorage.getItem("panelLayout");
-    return savedLayout ? JSON.parse(savedLayout) : "grid";
-  });
-  const [panelSize, setPanelSize] = useState(() => {
-    const savedSize = localStorage.getItem("panelSize");
-    return savedSize ? JSON.parse(savedSize) : { width: "100%", height: "auto" };
-  });
+  const [panels, setPanels] = useState([]);
 
-  // Save panels to localStorage on change
-  useEffect(() => {
-    try {
-      localStorage.setItem("panels", JSON.stringify(panels));
-    } catch (e) {
-      console.error("Failed to save panels to localStorage:", e);
-    }
-  }, [panels]);
+  const loadPanels = useCallback(async (projectId, token) => {
+    const res = await fetch(`/studio/projects/${projectId}/panels`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    setPanels(data);
+  }, []);
 
-  // Save layout and panel size to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem("panelLayout", JSON.stringify(layout));
-      localStorage.setItem("panelSize", JSON.stringify(panelSize));
-    } catch (e) {
-      console.error("Failed to save layout/size to localStorage:", e);
-    }
-  }, [layout, panelSize]);
+  const addPanel = useCallback(async (payload, token) => {
+    const res = await fetch(`/studio/panels/manual`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+    const newPanel = await res.json();
+    setPanels(prev => [...prev, newPanel]);
+  }, []);
 
-  const addPanel = (newPanel) => {
-    setPanels([...panels, newPanel]);
-  };
+  const updatePanel = useCallback(async (panelId, payload, token) => {
+    const res = await fetch(`/studio/panels/${panelId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+    const updated = await res.json();
+    setPanels(prev => prev.map(p => p.id === updated.id ? updated : p));
+  }, []);
 
-  const updatePanel = (updatedPanel) => {
-    setPanels(panels.map(panel => 
-      panel.id === updatedPanel.id ? updatedPanel : panel
-    ));
-  };
-
-  const deletePanel = (panelId) => {
-    setPanels(panels.filter(panel => panel.id !== panelId));
-  };
+  const deletePanel = useCallback(async (panelId, token) => {
+    await fetch(`/studio/panels/${panelId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setPanels(prev => prev.filter(p => p.id !== panelId));
+  }, []);
 
   return (
-    <PanelContext.Provider value={{ panels, addPanel, updatePanel, deletePanel, layout, setLayout, panelSize, setPanelSize }}>
+    <PanelContext.Provider
+      value={{ panels, loadPanels, addPanel, updatePanel, deletePanel }}
+    >
       {children}
     </PanelContext.Provider>
   );
+};
+
+export const usePanelContext = () => {
+  const ctx = useContext(PanelContext);
+  if (!ctx) throw new Error("usePanelContext must be used inside <PanelProvider>");
+  return ctx;
 };
